@@ -1,4 +1,4 @@
-name: Windows Build
+name: Build owsjho.cpp
 
 on:
   push:
@@ -14,10 +14,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up MSVC environment and compile code
+    - name: Setup MSVC environment and compile
       shell: cmd
       run: |
-        REM Call the Visual Studio developer batch file to set environment variables.
-        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
-        REM Now compile the code.
-        cl /W4 owsjho.c /link user32.lib gdi32.lib
+        REM Locate Visual Studio installation with vswhere.
+        for /f "usebackq tokens=*" %%i in (`"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do (
+            set "VSINSTALLDIR=%%i"
+        )
+        echo Visual Studio installation directory: %VSINSTALLDIR%
+        REM Initialize the MSVC environment.
+        call "%VSINSTALLDIR%\VC\Auxiliary\Build\vcvars64.bat"
+        REM Compile the code.
+        cl /W4 owsjho.cpp /link user32.lib
