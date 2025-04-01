@@ -1,0 +1,20 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Compile code with MSVC
+      run: |
+        cl /W4 owsjho.c /link user32.lib gdi32.lib
+
