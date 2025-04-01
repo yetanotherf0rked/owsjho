@@ -14,7 +14,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Compile code with MSVC
+    - name: Set up MSVC environment and compile code
+      shell: cmd
       run: |
+        REM Call the Visual Studio developer batch file to set environment variables.
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+        REM Now compile the code.
         cl /W4 owsjho.c /link user32.lib gdi32.lib
-
