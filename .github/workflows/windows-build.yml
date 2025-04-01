@@ -2,7 +2,7 @@ name: Build Windows Executable
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -13,15 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Native Tools
-      uses: llvm/actions/setup@v1
-      with:
-        compiler: cl
-
-    - name: Compile Windows Application
+    - name: Setup MSVC Environment
+      shell: cmd
       run: |
-        cl /nologo /EHsc /Fe:owsjho.exe owsjho.cpp ^
-        /link /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup user32.lib gdi32.lib
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        echo "MSVC environment set" > nul
+
+    - name: Compile Application
+      shell: cmd
+      run: |
+        cl /EHsc /Fe:owsjho.exe owsjho.cpp user32.lib gdi32.lib /link /SUBSYSTEM:WINDOWS
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
